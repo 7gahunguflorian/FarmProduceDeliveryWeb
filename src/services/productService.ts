@@ -1,7 +1,15 @@
 import api from './api';
 import { Product } from '../types';
 
-export const productService = {
+const productService = {
+  getAll: async () => {
+    const response = await api.get('/products');
+    return response.data;
+  },
+  getById: async (id: number) => {
+    const response = await api.get(`/products/${id}`);
+    return response.data;
+  },
   getAllProducts: async (): Promise<Product[]> => {
     const response = await api.get('/api/products');
     return response.data;
