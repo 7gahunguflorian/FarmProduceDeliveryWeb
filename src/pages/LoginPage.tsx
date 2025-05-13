@@ -64,6 +64,11 @@ const LoginPage: React.FC = () => {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
           {showRegister ? 'Create a new account' : 'Sign in to your account'}
         </h2>
+        <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+          {showRegister
+            ? 'Join our community of farmers and clients'
+            : 'Welcome back! Please enter your details'}
+        </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -77,11 +82,12 @@ const LoginPage: React.FC = () => {
           {showRegister ? (
             <form className="space-y-6" onSubmit={handleRegister}>
               <Input
-                label="Name"
+                label="Full Name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
+                placeholder="Enter your full name"
               />
               
               <Input
@@ -90,6 +96,7 @@ const LoginPage: React.FC = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
+                placeholder="Choose a username"
               />
               
               <Input
@@ -98,6 +105,7 @@ const LoginPage: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                placeholder="Enter your email"
               />
               
               <Input
@@ -106,17 +114,18 @@ const LoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                placeholder="Create a password"
               />
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   I am a:
                 </label>
                 <div className="flex space-x-4">
                   <label className="inline-flex items-center">
                     <input
                       type="radio"
-                      className="form-radio text-blue-600"
+                      className="form-radio h-4 w-4 text-blue-600 border-gray-300 dark:border-gray-600 focus:ring-blue-500"
                       name="role"
                       checked={role === 'FARMER'}
                       onChange={() => setRole('FARMER')}
@@ -126,7 +135,7 @@ const LoginPage: React.FC = () => {
                   <label className="inline-flex items-center">
                     <input
                       type="radio"
-                      className="form-radio text-blue-600"
+                      className="form-radio h-4 w-4 text-blue-600 border-gray-300 dark:border-gray-600 focus:ring-blue-500"
                       name="role"
                       checked={role === 'CLIENT'}
                       onChange={() => setRole('CLIENT')}
@@ -142,7 +151,7 @@ const LoginPage: React.FC = () => {
                   className="w-full"
                   isLoading={isLoading}
                 >
-                  Register
+                  Create Account
                 </Button>
               </div>
             </form>
@@ -154,6 +163,7 @@ const LoginPage: React.FC = () => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
+                placeholder="Enter your username"
               />
               
               <Input
@@ -162,6 +172,7 @@ const LoginPage: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                placeholder="Enter your password"
               />
               
               <div>
@@ -170,7 +181,7 @@ const LoginPage: React.FC = () => {
                   className="w-full"
                   isLoading={isLoading}
                 >
-                  Sign in
+                  Login
                 </Button>
               </div>
             </form>
@@ -179,7 +190,7 @@ const LoginPage: React.FC = () => {
           <div className="mt-6">
             <button
               type="button"
-              className="w-full text-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors"
+              className="w-full text-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
               onClick={() => setShowRegister(!showRegister)}
             >
               {showRegister
