@@ -38,6 +38,11 @@ export const userService = {
     
     return response.data.imageUrl;
   },
+  
+  getAll: async (): Promise<User[]> => {
+    const response = await api.get('/users');
+    return response.data;
+  },
 };
 
 export default userService;
