@@ -6,11 +6,17 @@ import Topbar from '../components/layout/Topbar';
 const Layout: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Sidebar />
-      <Topbar />
-      <main className="pt-16 md:ml-64 ml-20 transition-all duration-200 ease-in-out">
-        <Outlet />
-      </main>
+      {/* Fixed Sidebar */}
+      <div className="fixed left-0 top-0 h-full w-64 border-r bg-white dark:bg-gray-800 z-20">
+        <Sidebar />
+      </div>
+      {/* Main content area with left margin */}
+      <div className="ml-64 flex flex-col min-h-screen">
+        <Topbar />
+        <main className="flex-1 p-6 overflow-y-auto">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };
