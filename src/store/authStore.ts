@@ -12,7 +12,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (username: string, password: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await api.post('/api/auth/login', { username, password });
+      const response = await api.post('/auth/login', { username, password });
       const { token, user } = response.data;
       
       localStorage.setItem('token', token);
@@ -34,7 +34,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (userData: RegisterData) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await api.post('/api/auth/register', userData);
+      const response = await api.post('/auth/register', userData);
       const { token, user } = response.data;
       
       localStorage.setItem('token', token);
