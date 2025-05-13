@@ -10,6 +10,9 @@ import Analytics from './components/Analytics';
 import ProtectedRoute from './utils/ProtectedRoute';
 import useAuthStore from './store/authStore';
 import userService from './services/userService';
+import ProductsPage from './pages/ProductsPage';
+import UsersPage from './pages/UsersPage';
+import DeliveriesPage from './pages/DeliveriesPage';
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -45,6 +48,9 @@ function App() {
         }>
           <Route index element={<Dashboard />} />
           <Route path="analytics" element={<Analytics />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="customers" element={<UsersPage />} />
+          <Route path="deliveries" element={<DeliveriesPage />} />
         </Route>
         
         <Route path="*" element={<Navigate to="/" />} />
