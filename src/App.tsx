@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -32,7 +32,7 @@ function App() {
   }, [isAuthenticated, user]);
 
   return (
-    <BrowserRouter>
+    <>
       <Routes>
         <Route path="/login" element={
           isAuthenticated ? <Navigate to="/" /> : <LoginPage />
@@ -62,7 +62,7 @@ function App() {
         pauseOnHover
         theme="light"
       />
-    </BrowserRouter>
+    </>
   );
 }
 
