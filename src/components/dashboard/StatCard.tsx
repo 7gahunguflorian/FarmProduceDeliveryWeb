@@ -36,23 +36,9 @@ const StatCard: React.FC<StatCardProps> = ({
             </div>
           )}
         </div>
-        
+        {/* Period text */}
         <div className="flex items-center mt-4">
-          <span 
-            className={`inline-flex items-center ${
-              isPositive 
-                ? 'text-green-600 dark:text-green-400' 
-                : 'text-red-600 dark:text-red-400'
-            }`}
-          >
-            {isPositive ? (
-              <ArrowUpRight className="h-4 w-4 mr-1" />
-            ) : (
-              <ArrowDownRight className="h-4 w-4 mr-1" />
-            )}
-            {Math.abs(change)}%
-          </span>
-          <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+          <span className="text-xs text-gray-500 dark:text-gray-400">
             {period}
           </span>
         </div>
