@@ -15,24 +15,20 @@ import UsersPage from './pages/UsersPage';
 import DeliveriesPage from './pages/DeliveriesPage';
 
 function App() {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, isLoading, checkAuth } = useAuthStore();
 
   useEffect(() => {
-    // If user is authenticated but user profile is not loaded
-    if (isAuthenticated && !user) {
-      const loadUser = async () => {
-        try {
-          const currentUser = await userService.getCurrentUser();
-          useAuthStore.setState({ user: currentUser });
-        } catch (error) {
-          console.error('Failed to load user profile:', error);
-          useAuthStore.setState({ isAuthenticated: false, token: null });
-        }
-      };
-      
-      loadUser();
-    }
-  }, [isAuthenticated, user]);
+    checkAuth();
+  }, [checkAuth]);
+
+  // Show loading indicator while checking authentication status
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <>
