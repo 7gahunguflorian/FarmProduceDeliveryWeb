@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { ExternalLink } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { Order } from '../../types';
@@ -12,6 +12,16 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
   orders,
   className
 }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const filteredOrders = useMemo(() => {
+    return orders.filter(order => 
+      order.clientUsername.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.clientLocation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.id.toString().includes(searchTerm)
+    );
+  }, [orders, searchTerm]);
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -24,27 +34,26 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
   return (
     <Card className={className}>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle>Recent Shipment</CardTitle>
+        <CardTitle>Recent Orders</CardTitle>
         <div className="flex items-center gap-2">
           <div className="relative">
             <input
               type="text"
-              placeholder="Search package"
+              placeholder="Search orders"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
             />
           </div>
-          <button className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-100 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800">
-            Filter
-          </button>
         </div>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200 dark:border-gray-700">
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  ID/Tracking
+                  ID
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Customer
@@ -66,8 +75,8 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {orders.map((order) => (
+            <tbody>
+              {filteredOrders.map((order) => (
                 <tr key={order.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                     #{order.id}
