@@ -20,6 +20,7 @@ export interface AuthState {
   register: (userData: RegisterData) => Promise<void>;
   logout: () => void;
   clearError: () => void;
+  checkAuth: () => Promise<void>;
 }
 
 export interface RegisterData {
