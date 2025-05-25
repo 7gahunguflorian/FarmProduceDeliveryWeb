@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Package, Truck, Users, ShoppingCart } from 'lucide-react';
+import { toast } from 'react-toastify';
 import StatCard from './dashboard/StatCard';
 import DeliveryChart from './dashboard/DeliveryChart';
 import PaymentChart from './dashboard/PaymentChart';
@@ -16,15 +17,19 @@ const Dashboard: React.FC = () => {
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
     const fetchDashboardData = async () => {
       setLoading(true);
+      setError(null);
       try {
-        const statsData = await dashboardService.getStats();
-        const deliveryDataResult = await dashboardService.getDeliveryData(timeFilter);
-        const paymentDataResult = await dashboardService.getPaymentData(timeFilter);
-        const recentOrders = await dashboardService.getRecentOrders();
+        const [statsData, deliveryDataResult, paymentDataResult, recentOrders] = await Promise.all([
+          dashboardService.getStats(),
+          dashboardService.getDeliveryData(timeFilter),
+          dashboardService.getPaymentData(timeFilter),
+          dashboardService.getRecentOrders()
+        ]);
         
         setStats(statsData);
         setDeliveryData(deliveryDataResult);
@@ -32,6 +37,8 @@ const Dashboard: React.FC = () => {
         setOrders(recentOrders);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
+        setError('Failed to load dashboard data. Please try again later.');
+        toast.error('Failed to load dashboard data. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -63,6 +70,37 @@ const Dashboard: React.FC = () => {
         return '';
     }
   };
+
+  const getPeriodText = (filter: TimeFilter) => {
+    switch (filter) {
+      case 'day':
+        return 'Last Day';
+      case 'week':
+        return 'Last Week';
+      case 'month':
+        return 'Last Month';
+      case 'year':
+        return 'Last Year';
+      default:
+        return '';
+    }
+  };
+  
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-red-500 text-center">
+          <p className="text-lg font-semibold">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="p-6">
@@ -129,24 +167,28 @@ const Dashboard: React.FC = () => {
                   title="Total Orders" 
                   value={stats.totalOrders.toLocaleString()}
                   change={5.8}
+                  period={getPeriodText(timeFilter)}
                   icon={<Package className="h-5 w-5" />}
                 />
                 <StatCard 
                   title="Total Successful Deliveries" 
                   value={stats.totalSuccessfulDeliveries.toLocaleString()}
                   change={8.1}
+                  period={getPeriodText(timeFilter)}
                   icon={<Truck className="h-5 w-5" />}
                 />
                 <StatCard 
                   title="Total Farmers" 
                   value={stats.totalFarmers.toLocaleString()}
                   change={-0.7}
+                  period={getPeriodText(timeFilter)}
                   icon={<Users className="h-5 w-5" />}
                 />
                 <StatCard 
                   title="Total Clients" 
                   value={stats.totalClients.toLocaleString()}
                   change={4.7}
+                  period={getPeriodText(timeFilter)}
                   icon={<ShoppingCart className="h-5 w-5" />}
                 />
               </>
