@@ -7,7 +7,7 @@ const ProductsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    productService.getAll().then(data => {
+    productService.getAllProducts().then(data => {
       setProducts(data);
       setLoading(false);
     });
