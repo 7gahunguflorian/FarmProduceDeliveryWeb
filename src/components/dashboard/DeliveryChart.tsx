@@ -20,15 +20,25 @@ interface DeliveryChartProps {
 
 const DeliveryChart: React.FC<DeliveryChartProps> = ({
   data,
-  title = 'Analytic View',
+  title = 'Delivery Analytics',
   className
 }) => {
+  const getDateRangeText = () => {
+    if (data.length === 0) return '';
+    
+    const dates = data.map(d => new Date(d.date));
+    const startDate = new Date(Math.min(...dates.map(d => d.getTime())));
+    const endDate = new Date(Math.max(...dates.map(d => d.getTime())));
+    
+    return `${startDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - ${endDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`;
+  };
+
   return (
     <Card className={className}>
       <CardHeader className="pb-2">
         <CardTitle>{title}</CardTitle>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          This data from October 30 - November 05
+          {getDateRangeText()}
         </p>
       </CardHeader>
       <CardContent>
