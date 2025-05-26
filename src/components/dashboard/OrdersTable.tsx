@@ -10,41 +10,39 @@ interface OrdersTableProps {
 
 const OrdersTable: React.FC<OrdersTableProps> = ({
   orders,
-  className
+  className = '',
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   const filteredOrders = useMemo(() => {
+    if (!orders) return [];
     return orders.filter(order => 
-      order.clientUsername.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.clientLocation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.id.toString().includes(searchTerm)
+      order.clientUsername?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.farmerUsername?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.clientLocation?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [orders, searchTerm]);
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
+    return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
+      month: 'short',
+      day: 'numeric',
     });
   };
-  
+
   return (
     <Card className={className}>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <CardHeader>
         <CardTitle>Recent Orders</CardTitle>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search orders"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-3 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
-            />
-          </div>
+        <div className="mt-4">
+          <input
+            type="text"
+            placeholder="Search orders..."
+            className="w-full px-3 py-2 border rounded-md"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
       </CardHeader>
       <CardContent>
@@ -88,7 +86,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
                     {formatDate(order.orderDate)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                    ${order.orderPrice.toFixed(2)}
+                    FBU {order.orderPrice.toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {order.clientLocation}

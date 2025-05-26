@@ -1,63 +1,98 @@
 import { create } from 'zustand';
-import { AuthState, LoginData, RegisterData, User } from '../types';
 import api from '../services/api';
+import { User } from '../types';
 
-export const useAuthStore = create<AuthState>((set, get) => ({
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
+  login: (username: string, password: string) => Promise<boolean>;
+  logout: () => void;
+  clearError: () => void;
+  checkAuth: () => Promise<boolean>;
+}
+
+export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   token: localStorage.getItem('token'),
-  isAuthenticated: false,
+  isAuthenticated: !!localStorage.getItem('token'),
   isLoading: false,
   error: null,
 
   login: async (username: string, password: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await api.post('/auth/login', { username, password, isWeb: true });
+      const response = await api.post('/auth/login', {
+        username,
+        password,
+      });
+
       const { token, user } = response.data;
       
-      localStorage.setItem('token', token);
-      
-      set({
-        user,
-        token,
-        isAuthenticated: true,
-        isLoading: false,
-      });
+      if (user.role === 'ADMIN') {
+        localStorage.setItem('token', token);
+        set({
+          user,
+          token,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+        return true;
+      } else {
+        set({ 
+          error: 'Access denied. Admin privileges required.',
+          isLoading: false 
+        });
+        return false;
+      }
     } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Invalid username or password';
       set({
+        error: errorMessage,
         isLoading: false,
-        error: error.response?.data?.message || 'Login failed',
         isAuthenticated: false,
         user: null,
         token: null,
       });
       localStorage.removeItem('token');
+      return false;
     }
   },
 
-  register: async (userData: RegisterData) => {
-    set({ isLoading: true, error: null });
+  checkAuth: async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      set({ isAuthenticated: false, user: null });
+      return false;
+    }
+
     try {
-      const response = await api.post('/auth/register', userData);
-      const { token, user } = response.data;
+      const response = await api.get('/auth/me');
+      const user = response.data;
       
-      localStorage.setItem('token', token);
-      
+      if (user.role === 'ADMIN') {
+        set({
+          user,
+          isAuthenticated: true,
+        });
+        return true;
+      } else {
+        set({
+          isAuthenticated: false,
+          user: null,
+        });
+        localStorage.removeItem('token');
+        return false;
+      }
+    } catch (error) {
       set({
-        user,
-        token,
-        isAuthenticated: true,
-        isLoading: false,
-      });
-    } catch (error: any) {
-      set({
-        isLoading: false,
-        error: error.response?.data?.message || 'Registration failed',
         isAuthenticated: false,
         user: null,
-        token: null,
       });
       localStorage.removeItem('token');
+      return false;
     }
   },
 
@@ -67,24 +102,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       user: null,
       token: null,
       isAuthenticated: false,
+      isLoading: false,
     });
-  },
-
-  checkAuth: async () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      set({ isLoading: true });
-      try {
-        const currentUser = await api.get<User>('/users/me');
-        set({ user: currentUser.data, isAuthenticated: true, isLoading: false });
-      } catch (error) {
-        console.error('Token validation failed:', error);
-        localStorage.removeItem('token');
-        set({ user: null, token: null, isAuthenticated: false, isLoading: false });
-      }
-    } else {
-      set({ isAuthenticated: false, isLoading: false });
-    }
   },
 
   clearError: () => set({ error: null }),

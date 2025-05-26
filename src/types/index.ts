@@ -1,10 +1,10 @@
 // User related types
 export interface User {
-  id: number;
+  id: string;
   name: string;
   username: string;
   email: string;
-  role: UserRole;
+  role: string;
   profileImageUrl?: string;
 }
 
@@ -16,11 +16,9 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  login: (username: string, password: string) => Promise<void>;
-  register: (userData: RegisterData) => Promise<void>;
+  login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   clearError: () => void;
-  checkAuth: () => Promise<void>;
 }
 
 export interface RegisterData {
@@ -28,7 +26,7 @@ export interface RegisterData {
   username: string;
   email: string;
   password: string;
-  role: UserRole;
+  role: string;
 }
 
 export interface LoginData {
